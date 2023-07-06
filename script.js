@@ -3,8 +3,8 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
 const snake = {
-    x: 10,
-    y: 10,
+    x: 20,
+    y: 20,
     size: 20
 };
 
@@ -12,6 +12,29 @@ function drawSnake() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'green';
     ctx.fillRect(snake.x, snake.y, snake.size, snake.size);
+}
+
+const food = {
+    x: -20,
+    y: -20,
+    size: 20
+};
+
+function generateFood() {
+    food.x = Math.floor(Math.random() * (canvas.width / food.size)) * food.size;
+    food.y = Math.floor(Math.random() * (canvas.height / food.size)) * food.size;
+}
+
+function drawFood() {
+    ctx.fillStyle = 'red';
+    ctx.fillRect(food.x, food.y, food.size, food.size);
+}
+
+function reset() {
+    snake.x = 20;
+    snake.y = 20;
+    snake.size = 20;
+    snake.direction = null;
 }
 
 function moveSnake() {
@@ -28,8 +51,13 @@ function moveSnake() {
 }
 
 setInterval(() => {
+    if (snake.x < 0 || snake.x > 400 || snake.y < 0 || snake.y > 400) {
+        reset();
+    } else {
     moveSnake();
     drawSnake();
+    drawFood();
+    }
 }, 200);
 
 document.addEventListener('keydown', (event) => {
@@ -45,3 +73,5 @@ document.addEventListener('keydown', (event) => {
 });
 
 drawSnake();
+generateFood();
+drawFood();
