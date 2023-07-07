@@ -1,17 +1,23 @@
 const canvas = document.getElementById('gameCanvas');
-
 const ctx = canvas.getContext('2d');
 
 const snake = {
     x: 20,
     y: 20,
-    size: 20
+    size: 20,
+    direction: null,
+    tail: []
 };
 
 function drawSnake() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'green';
     ctx.fillRect(snake.x, snake.y, snake.size, snake.size);
+  
+    for (let i = 0; i < snake.tail.length; i++) {
+        const tailSegment = snake.tail[i];
+        ctx.fillRect(tailSegment.x, tailSegment.y, tailSegment.size, tailSegment.size);
+    }
 }
 
 const food = {
@@ -35,6 +41,7 @@ function reset() {
     snake.y = 20;
     snake.size = 20;
     snake.direction = null;
+    snake.tail = [];
 }
 
 function moveSnake() {
@@ -48,28 +55,43 @@ function moveSnake() {
     } else if (snake.direction === 'down') {
         snake.y += snake.size;
     }
+    
+    if (snake.x === food.x && snake.y === food.y) {
+        growSnake();
+        generateFood();
+    } else {
+        snake.tail.pop();
+    }
+  
+    const newTailSegment = { x: snake.x, y: snake.y, size: snake.size };
+    snake.tail.unshift(newTailSegment);
+}
+
+function growSnake() {
+    const newTailSegment = { x: snake.x, y: snake.y, size: snake.size };
+    snake.tail.unshift(newTailSegment);
 }
 
 setInterval(() => {
     if (snake.x < 0 || snake.x > 400 || snake.y < 0 || snake.y > 400) {
         reset();
     } else {
-    moveSnake();
-    drawSnake();
-    drawFood();
+        moveSnake();
+        drawSnake();
+        drawFood();
     }
 }, 200);
 
 document.addEventListener('keydown', (event) => {
     if (event.key === 'ArrowRight' && snake.direction !== 'left') {
         snake.direction = 'right';
-      } else if (event.key === 'ArrowLeft' && snake.direction !== 'right') {
+    } else if (event.key === 'ArrowLeft' && snake.direction !== 'right') {
         snake.direction = 'left';
-      } else if (event.key === 'ArrowUp' && snake.direction !== 'down') {
+    } else if (event.key === 'ArrowUp' && snake.direction !== 'down') {
         snake.direction = 'up';
-      } else if (event.key === 'ArrowDown' && snake.direction !== 'up') {
+    } else if (event.key === 'ArrowDown' && snake.direction !== 'up') {
         snake.direction = 'down';
-      }
+    }
 });
 
 drawSnake();
