@@ -45,26 +45,32 @@ function reset() {
 }
 
 function moveSnake() {
+    const newHead = { x: snake.x, y: snake.y, size: snake.size };
+
     if (snake.direction === 'right') {
-        snake.x += snake.size;
-        console.log("snake is moving");
+        newHead.x += snake.size;
     } else if (snake.direction === 'left') {
-        snake.x -= snake.size;
+        newHead.x -= snake.size;
     } else if (snake.direction === 'up') {
-        snake.y -= snake.size;
+        newHead.y -= snake.size;
     } else if (snake.direction === 'down') {
-        snake.y += snake.size;
+        newHead.y += snake.size;
     }
-    
-    if (snake.x === food.x && snake.y === food.y) {
-        growSnake();
-        generateFood();
-    } else {
-        snake.tail.pop();
+
+    snake.tail.unshift(newHead);
+
+    if (snake.tail.length > 1) {
+        const hasEaten = newHead.x === food.x && newHead.y === food.y;
+
+        if (!hasEaten) {
+            snake.tail.pop();
+        } else {
+            generateFood();
+        }
     }
-  
-    const newTailSegment = { x: snake.x, y: snake.y, size: snake.size };
-    snake.tail.unshift(newTailSegment);
+
+    snake.x = newHead.x;
+    snake.y = newHead.y;
 }
 
 function growSnake() {
