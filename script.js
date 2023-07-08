@@ -57,6 +57,26 @@ function moveSnake() {
         newHead.y += snake.size;
     }
 
+    // Check for wall collision
+    if (
+        newHead.x < 0 ||
+        newHead.x >= canvas.width ||
+        newHead.y < 0 ||
+        newHead.y >= canvas.height
+    ) {
+        reset();
+        return; // Exit the function to prevent further movement
+    }
+
+    // Check for collision with own body
+    for (let i = 0; i < snake.tail.length; i++) {
+        const tailSegment = snake.tail[i];
+        if (newHead.x === tailSegment.x && newHead.y === tailSegment.y) {
+            reset();
+            return; // Exit the function to prevent further movement
+        }
+    }
+
     snake.tail.unshift(newHead);
 
     if (snake.tail.length > 1) {
@@ -75,28 +95,32 @@ function moveSnake() {
 
 function growSnake() {
     const newTailSegment = { x: snake.x, y: snake.y, size: snake.size };
-    snake.tail.unshift(newTailSegment);
+    snake.tail.unshift(newTailSegment); // adds new head
 }
 
 setInterval(() => {
-    if (snake.x < 0 || snake.x > 400 || snake.y < 0 || snake.y > 400) {
-        reset();
-    } else {
-        moveSnake();
-        drawSnake();
-        drawFood();
-    }
-}, 200);
+    moveSnake();
+    drawSnake();
+    drawFood();
+    isDirectionSet = false;
+}, 150);
 
+let isDirectionSet = false; // Flag to track if a keypress has been registered
 document.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowRight' && snake.direction !== 'left') {
-        snake.direction = 'right';
-    } else if (event.key === 'ArrowLeft' && snake.direction !== 'right') {
-        snake.direction = 'left';
-    } else if (event.key === 'ArrowUp' && snake.direction !== 'down') {
-        snake.direction = 'up';
-    } else if (event.key === 'ArrowDown' && snake.direction !== 'up') {
-        snake.direction = 'down';
+    if (!isDirectionSet) {
+        if (event.key === 'ArrowRight' && snake.direction !== 'left') {
+            snake.direction = 'right';
+            isDirectionSet = true; // Set the flag to true
+        } else if (event.key === 'ArrowLeft' && snake.direction !== 'right') {
+            snake.direction = 'left';
+            isDirectionSet = true; // Set the flag to true
+        } else if (event.key === 'ArrowUp' && snake.direction !== 'down') {
+            snake.direction = 'up';
+            isDirectionSet = true; // Set the flag to true
+        } else if (event.key === 'ArrowDown' && snake.direction !== 'up') {
+            snake.direction = 'down';
+            isDirectionSet = true; // Set the flag to true
+        }
     }
 });
 
