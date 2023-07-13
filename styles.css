@@ -1,3 +1,33 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@font-face {
+    font-family: 'CustomFont';
+    src: url(DatcubBold-4BMy6.ttf);
+}
+
+h1 {
+    font-family: 'CustomFont', sans-serif;
+    font-size: 100px;
+    color: green;
+    margin: 0;
+}
+
+p {
+    font-family: 'CustomFont', sans-serif;
+    font-size: 20px;
+    color: green;
+    margin: 0;
+}
+
 #gameCanvas {
     border: 2px solid green;
+}
+
+body {
+    background-color: black;
 }

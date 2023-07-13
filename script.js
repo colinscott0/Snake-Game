@@ -27,8 +27,17 @@ const food = {
 };
 
 function generateFood() {
-    food.x = Math.floor(Math.random() * (canvas.width / food.size)) * food.size;
-    food.y = Math.floor(Math.random() * (canvas.height / food.size)) * food.size;
+    let isFoodOnSnake = true;
+
+    while (isFoodOnSnake) {
+        food.x = Math.floor(Math.random() * (canvas.width / food.size)) * food.size;
+        food.y = Math.floor(Math.random() * (canvas.height / food.size)) * food.size;
+
+        // Check if the food position coincides with any part of the snake
+        isFoodOnSnake = snake.tail.some(tailSegment => {
+            return tailSegment.x === food.x && tailSegment.y === food.y;
+        });
+    }
 }
 
 function drawFood() {
@@ -42,6 +51,7 @@ function reset() {
     snake.size = 20;
     snake.direction = null;
     snake.tail = [];
+    resetScore();
 }
 
 function moveSnake() {
@@ -86,6 +96,8 @@ function moveSnake() {
             snake.tail.pop();
         } else {
             generateFood();
+            increaseScore(); // Increase the score when appropriate
+            updateHighScoreIfNecessary(); // Update the high score if necessary
         }
     }
 
@@ -103,6 +115,7 @@ setInterval(() => {
     drawSnake();
     drawFood();
     isDirectionSet = false;
+    updateScore;
 }, 150);
 
 let isDirectionSet = false; // Flag to track if a keypress has been registered
@@ -127,3 +140,34 @@ document.addEventListener('keydown', (event) => {
 drawSnake();
 generateFood();
 drawFood();
+
+const scoreElement = document.getElementById('score');
+const highScoreElement = document.getElementById('high-score');
+
+let score = 0;
+let highScore = 0;
+
+function updateScore() {
+    scoreElement.textContent = score;
+}
+
+function updateHighScore() {
+    highScoreElement.textContent = highScore;
+}
+
+function increaseScore() {
+    score++;
+    updateScore();
+}
+
+function updateHighScoreIfNecessary() {
+    if (score > highScore) {
+        highScore = score;
+        updateHighScore();
+    }
+}
+
+function resetScore() {
+    score = 0;
+    updateScore();
+}
